@@ -22,66 +22,112 @@ def read_matrix(matrix):
 
 
 def calc_right(i, j, matrix):
-	tmp = matrix[i, j]
-	tmp *= matrix[i, j+1]
-	tmp *= matrix[i, j+2]
-	tmp *= matrix[i, j+3]
+	tmp = matrix[i][j]
+	tmp *= matrix[i][j+1]
+	tmp *= matrix[i][j+2]
+	tmp *= matrix[i][j+3]
 	return tmp
 
 def calc_left(i, j, matrix):
-	tmp = matrix[i, j]
-	tmp *= matrix[i, j-1]
-	tmp *= matrix[i, j-2]
-	tmp *= matrix[i, j-3]
+	tmp = matrix[i][j]
+	tmp *= matrix[i][j-1]
+	tmp *= matrix[i][j-2]
+	tmp *= matrix[i][j-3]
 	return tmp
 
 def calc_down(i, j, matrix):
-	tmp = matrix[i, j]
-	tmp *= matrix[i+1, j]
-	tmp *= matrix[i+2, j]
-	tmp *= matrix[i+3, j]
+	tmp = matrix[i][j]
+	tmp *= matrix[i+1][j]
+	tmp *= matrix[i+2][j]
+	tmp *= matrix[i+3][j]
 	return tmp
 
 def calc_up(i, j, matrix):
-	tmp = matrix[i, j]
-	tmp *= matrix[i-1, j]
-	tmp *= matrix[i-2, j]
-	tmp *= matrix[i-3, j]
+	tmp = matrix[i][j]
+	tmp *= matrix[i-1][j]
+	tmp *= matrix[i-2][j]
+	tmp *= matrix[i-3][j]
 	return tmp
+
+def calc_right_down(i, j, matrix):
+	tmp = matrix[i][j]
+	tmp *= matrix[i+1][j+1]
+	tmp *= matrix[i+2][j+2]
+	tmp *= matrix[i+3][j+3]
+	return tmp
+
+def calc_right_up(i, j, matrix):
+	tmp = matrix[i][j]
+	tmp *= matrix[i-1][j+1]
+	tmp *= matrix[i-2][j+2]
+	tmp *= matrix[i-3][j+3]
+	return tmp
+
+def calc_left_down(i, j, matrix):
+	tmp = matrix[i][j]
+	tmp *= matrix[i+1][j-1]
+	tmp *= matrix[i+2][j-2]
+	tmp *= matrix[i+3][j-3]
+	return tmp
+
+def calc_left_up(i, j, matrix):
+	tmp = matrix[i][j]
+	tmp *= matrix[i-1][j-1]
+	tmp *= matrix[i-2][j-2]
+	tmp *= matrix[i-3][j-3]
+	return tmp
+
+def check_largest(largest, candidate):
+	if candidate > largest:
+		return candidate
+	return largest
 
 def calc_adj(i, j, matrix):
 	largest = 0
-	tmp = 1
-	if j < 17:
-		tmp = calc_right(i, j, matrix)
-		if  tmp > largest:
-			largest = tmp
 
+	if j < 17:
+		largest = check_largest(calc_right(i, j, matrix), largest)
+		
+	if j < 17 and i < 17:
+		largest = check_largest(calc_right_down(i, j, matrix), largest)
+			
+	if j < 17 and i > 2:
+		largest = check_largest(calc_right_up(i, j, matrix), largest)
+			
 	if j > 2:
-		tmp = calc_left(i, j, matrix)
-		if tmp > largest:
-			largest = tmp
+		largest = check_largest(calc_left(i, j, matrix), largest)
+	
+	if j > 2 and i < 17:
+		largest = check_largest(calc_left_down(i, j, matrix), largest)
+		
+	if j > 2 and i > 2:
+		largest = check_largest(calc_left_up(i, j, matrix), largest)
 
 	if i < 17:
-		tmp = calc_down(i, j, matrix)
-		if tmp > largest:
-			largest = tmp
+		largest = check_largest(calc_down(i, j, matrix), largest)
 	
 	if i > 2:
-		tmp = calc_up(i, j, matrix)
-		if tmp > largest:
-			largest = tmp
+		largest = check_largest(calc_up(i, j, matrix), largest)
+			
+	return largest
 
 def main():
 	matrix = [[0]*20 for x in range (20)]
 	matrix = read_matrix(matrix)
 	
 	biggest = 1
+	index_i = 0
+	index_j = 0
 	
 	for i in range(20):
 		for j in range(20):
-			
-	
+			tmp = calc_adj(i, j, matrix)
+			if tmp > biggest:
+				biggest = tmp
+				index_i = i
+				index_j = j
+	print("largest found at: " + str(index_i) + ", " + str(index_j))
+	print("largest value: " + str(biggest))
 	return 0
 
 main()
